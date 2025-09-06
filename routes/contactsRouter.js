@@ -5,18 +5,44 @@ import {
   deleteContact,
   createContact,
   updateContact,
+  updateStatusContact,
 } from "../controllers/contactsControllers.js";
+import asyncHandler from "../helpers/asyncHandler.js";
+import validate from "../helpers/validate.js";
+import {
+  createContactSchema,
+  paginationSchema,
+  updateContactSchema,
+  updateFavoriteSchema,
+} from "../schemas/contactsSchemas.js";
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", getAllContacts);
+contactsRouter.get(
+  "/",
+  validate(paginationSchema, "query"),
+  asyncHandler(getAllContacts)
+);
 
-contactsRouter.get("/:id", getOneContact);
+contactsRouter.get("/:id", asyncHandler(getOneContact));
 
-contactsRouter.delete("/:id", deleteContact);
+contactsRouter.delete("/:id", asyncHandler(deleteContact));
 
-contactsRouter.post("/", createContact);
+contactsRouter.post(
+  "/",
+  validate(createContactSchema),
+  asyncHandler(createContact)
+);
 
-contactsRouter.put("/:id", updateContact);
+contactsRouter.put(
+  "/:id",
+  validate(updateContactSchema),
+  asyncHandler(updateContact)
+);
+contactsRouter.patch(
+  "/:contactId/favorite",
+  validate(updateFavoriteSchema),
+  asyncHandler(updateStatusContact)
+);
 
 export default contactsRouter;
