@@ -2,11 +2,21 @@ import { Contact } from "../models/contact.js";
 
 export async function listContacts({
   page = 1,
-  limit = 10,
+  limit = 20,
   sort = "ASC",
+  owner,
+  favorite,
 } = {}) {
+  const where = { owner };
   const offset = (page - 1) * limit;
+
+  if (typeof favorite !== "undefined") {
+    if (favorite === "true" || favorite === true) where.favorite = true;
+    else if (favorite === "false" || favorite === false) where.favorite = false;
+  }
+
   const { rows, count } = await Contact.findAndCountAll({
+    where,
     limit,
     offset,
     order: [["id", sort.toUpperCase()]],

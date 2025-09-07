@@ -9,11 +9,14 @@ import {
 import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = async (req, res) => {
-  const { page = 1, limit = 10, sort = "ASC" } = req.query;
+  const { page = 1, limit = 20, sort = "ASC", favorite } = req.query;
+  const owner = req.user.id;
   const contacts = await listContacts({
     page: Number(page),
     limit: Number(limit),
     sort,
+    owner,
+    favorite,
   });
 
   return res.json(contacts);
