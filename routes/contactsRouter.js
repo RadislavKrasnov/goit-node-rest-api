@@ -21,6 +21,7 @@ const contactsRouter = express.Router();
 
 contactsRouter.get(
   "/",
+  auth,
   validate(getAllContactsSchema, "query"),
   asyncHandler(getAllContacts)
 );
