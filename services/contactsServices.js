@@ -31,33 +31,39 @@ export async function listContacts({
   };
 }
 
-export async function getContactById(contactId) {
-  return await Contact.findByPk(contactId);
+export async function getContactById(contactId, owner) {
+  return await Contact.findOne({ where: { id: contactId, owner } });
 }
 
-export async function removeContact(contactId) {
-  const contact = await Contact.findByPk(contactId);
+export async function removeContact(contactId, owner) {
+  const contact = await Contact.findOne({ where: { id: contactId, owner } });
+
   if (!contact) return null;
+
   await contact.destroy();
 
   return contact;
 }
 
-export async function addContact(name, email, phone) {
-  return await Contact.create({ name, email, phone });
+export async function addContact({ name, email, phone, owner }) {
+  return await Contact.create({ name, email, phone, owner });
 }
 
-export async function updateContact(contactId, data) {
-  const contact = await Contact.findByPk(contactId);
+export async function updateContact(contactId, data, owner) {
+  const contact = await Contact.findOne({ where: { id: contactId, owner } });
+
   if (!contact) return null;
+
   await contact.update(data);
 
   return contact;
 }
 
-export async function updateStatusContact(contactId, body) {
-  const contact = await Contact.findByPk(contactId);
+export async function updateStatusContact(contactId, body, owner) {
+  const contact = await Contact.findOne({ where: { id: contactId, owner } });
+
   if (!contact) return null;
+  
   await contact.update({ favorite: body.favorite });
 
   return contact;
