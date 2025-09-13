@@ -18,6 +18,10 @@ export const paginationSchema = Joi.object({
   sort: Joi.string().valid("ASC", "DESC", "asc", "desc"),
 });
 
+export const getAllContactsSchema = paginationSchema.append({
+  favorite: Joi.boolean().optional(),
+});
+
 export const updateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required(),
 });

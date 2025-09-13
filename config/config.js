@@ -6,4 +6,6 @@ export const Configs = {
   db_host: process.env.DB_HOST ?? "localhost",
   db_port: process.env.DB_PORT ?? 3306,
   db_name: process.env.DB_NAME ?? "contacts",
+  jwt_secret: process.env.JWT_SECRET || "secretkey",
+  jwt_expires: process.env.JWT_EXPIRES_IN || "23h",
 };
