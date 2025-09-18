@@ -7,6 +7,7 @@ import {
   logout,
   current,
   updateSubscription,
+  updateAvatar,
 } from "../controllers/authControllers.js";
 import {
   registerSchema,
@@ -14,6 +15,7 @@ import {
   subscriptionSchema,
 } from "../schemas/authSchemas.js";
 import auth from "../helpers/authHandler.js";
+import { fileUploader } from "../config/file-uploader.config.js";
 
 const router = express.Router();
 
@@ -26,6 +28,12 @@ router.patch(
   auth,
   validate(subscriptionSchema),
   asyncHandler(updateSubscription)
+);
+router.patch(
+  "/avatars",
+  auth,
+  fileUploader.single("avatar"),
+  asyncHandler(updateAvatar)
 );
 
 export default router;
