@@ -57,3 +57,22 @@ export const updateAvatar = async (req, res) => {
 
   return res.json({ avatarURL });
 };
+
+export const verify = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  const user = await authService.verifyUserByToken(verificationToken);
+
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  return res.json({ message: "Verification successful" });
+};
+
+export const resendVerify = async (req, res) => {
+  const { email } = req.body;
+  await authService.resendVerificationEmail(email);
+
+  return res.json({ messsage: "Verification email sent" });
+};
