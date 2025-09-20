@@ -16,6 +16,8 @@ export async function up({ context }) {
         password: password1,
         subscription: "starter",
         token: null,
+        verify: true,
+        verificationToken: null,
       },
       {
         id: 2,
@@ -23,6 +25,8 @@ export async function up({ context }) {
         password: password2,
         subscription: "pro",
         token: null,
+        verify: true,
+        verificationToken: null,
       },
     ],
     {}

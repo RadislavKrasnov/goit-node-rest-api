@@ -8,11 +8,15 @@ import {
   current,
   updateSubscription,
   updateAvatar,
+  verify,
+  resendVerify,
 } from "../controllers/authControllers.js";
 import {
   registerSchema,
   loginSchema,
   subscriptionSchema,
+  resendVerifySchema,
+  verifyParamsSchema,
 } from "../schemas/authSchemas.js";
 import auth from "../helpers/authHandler.js";
 import { fileUploader } from "../config/file-uploader.config.js";
@@ -34,6 +38,16 @@ router.patch(
   auth,
   fileUploader.single("avatar"),
   asyncHandler(updateAvatar)
+);
+router.get(
+  "/verify/:verificationToken",
+  validate(verifyParamsSchema, "params"),
+  asyncHandler(verify)
+);
+router.post(
+  "/verify",
+  validate(resendVerifySchema),
+  asyncHandler(resendVerify)
 );
 
 export default router;

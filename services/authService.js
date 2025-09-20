@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import path from "node:path";
 import { fileTypeFromFile } from "file-type";
 import fs from "fs/promises";
+import { sendVerificationEmail } from "./emailService.js";
 
 export async function registerUser({ email, password }) {
   const existing = await User.findOne({ where: { email } });
@@ -18,7 +19,21 @@ export async function registerUser({ email, password }) {
 
   const hashed = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email, { s: 250, d: "identicon" }, true);
-  const user = await User.create({ email, password: hashed, avatarURL });
+  const verificationToken = uuidv4();
+  const user = await User.create({ 
+    email, 
+    password: hashed, 
+    avatarURL,
+    verify: false,
+    verificationToken,
+  });
+
+  try {
+    await sendVerificationEmail(user.email, verificationToken);
+  } catch (error) {
+    console.error("Error sending verification email", error);
+    throw HttpError(500, "Error sending verification email");
+  }
 
   return {
     email: user.email,
@@ -38,6 +53,10 @@ export async function loginUser({ email, password }) {
 
   if (!isValid) {
     throw HttpError(401, "Email or password is wrong");
+  }
+
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified");
   }
 
   const payload = { id: user.id };
@@ -129,4 +148,36 @@ export async function updateAvatar(userId, file) {
   await user.save();
 
   return user.avatarURL;
+}
+
+export async function verifyUserByToken(verificationToken) {
+  const user = await User.findOne({ where: { verificationToken } });
+
+  if (!user) return null;
+
+  user.verificationToken = null;
+  user.verify = true;
+  await user.save();
+
+  return user;
+}
+
+export async function resendVerificationEmail(email) {
+  const user = await User.findOne({ where: { email } });
+
+  if (!user) throw HttpError(404, "User not found");
+
+  if (user.verify) throw HttpError(400, "Verification has already been passed");
+
+  if (!user.verificationToken) {
+    user.verificationToken = uuidv4();
+    await user.save();
+  }
+
+  try {
+    await sendVerificationEmail(user.email, user.verificationToken);
+  } catch (error) {
+    console.error("Error sending verification email (resend):", error);
+    throw HttpError(500, "Error sending verification email");
+  }
 }

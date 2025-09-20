@@ -8,4 +8,11 @@ export const Configs = {
   db_name: process.env.DB_NAME ?? "contacts",
   jwt_secret: process.env.JWT_SECRET || "secretkey",
   jwt_expires: process.env.JWT_EXPIRES_IN || "23h",
+  base_url: process.env.BASE_URL || `http://localhost:${Configs.port}`,
+  email_from: process.env.EMAIL_FROM || "TEST APP",
+  email_user: process.env.EMAIL_USER || "",
+  email_pass: process.env.EMAIL_PASS || "",
+  email_secure: process.env.EMAIL_SECURE || true,
+  email_host: process.env.EMAIL_HOST || "smtp.ukr.net",
+  email_port: process.env.EMAIL_PORT || "465",
 };
